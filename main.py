@@ -231,8 +231,9 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
                     "Confirmation",
                     "There are some changes. Do you want to save?",
                 ).exec_()
-                self.saveData()
-                self.showDialogNotifications("Confirmation", "Saved!").exec()
+                if reply == StatusDiaLog.Yes.value:
+                    self.saveData()
+                    self.showDialogNotifications("Confirmation", "Saved!").exec()
         else:
             event.accept()
 
