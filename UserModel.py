@@ -55,8 +55,11 @@ class User:
         if not value:
             raise ValueError("Full name cannot be empty")
         for char in value:
-            if not (("A" <= char and char <= "Z") or ("a" <= char and char <= "z")):
-                raise ValueError("Name is valid")
+            if len(value):
+                if not (("A" <= char and char <= "Z") or ("a" <= char and char <= "z")):
+                    raise ValueError("Name is valid")
+            else:
+                raise ValueError("Name is so long")
         self._full_name = value
 
     # region Getter and Setter for address
@@ -68,6 +71,8 @@ class User:
     def address(self, value):
         if not value:
             raise ValueError("Address cannot be empty")
+        if len(value):
+            raise ValueError("Address is so long")
         self._address = value
 
     # region Getter and Setter for email
@@ -77,8 +82,11 @@ class User:
 
     @email.setter
     def email(self, value):
-        if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", value):
-            raise ValueError("Invalid email format")
+        if len(value) < 30:
+            if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", value):
+                raise ValueError("Invalid email format")
+        else:
+            raise ValueError("Email is so long")
         self._email = value
 
     # region Getter and Setter for phone_number
@@ -134,3 +142,6 @@ class User:
             self.gender,
             self.birth_date,
         ]
+
+
+# endregion
