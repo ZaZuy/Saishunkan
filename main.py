@@ -83,6 +83,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
         # design
         self.tableWidget.setColumnCount(len(ColumnHeaders.list_name()))
         self.tableWidget.setHorizontalHeaderLabels(ColumnHeaders.list_value())
+        self.tableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
         self.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setSectionResizeMode(
             1, QHeaderView.ResizeToContents
