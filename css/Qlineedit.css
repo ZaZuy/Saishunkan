@@ -1,0 +1,26 @@
+QLineEdit {
+    border: 2px solid #000000;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+QLineEdit:hover {
+    border: 2px solid #728156;
+}
+
+QTableWidget {
+    background-color: white;
+}
+
+QPushButton {
+    border-radius: 7px;
+    color: white;
+    background-color: #88976C;
+
+}
+
+QPushButton:hover {
+    background-color: #728156;
+    color: white;
+    font-weight: 700;
+}
