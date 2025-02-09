@@ -18,45 +18,42 @@
 
 # region import
 # Python
-from enum import Enum
+from enum import Enum, auto, StrEnum
+from typing import List
 
-
-# Python
 # region main
 class ExtendedEnum(Enum):
-
     @classmethod
-    # region method
-    # convert properties enum to list by name
-    def list_name(cls):
+    def list_name(cls) -> List[str]:
+        """Convert enum properties to a list of names."""
         return [c.name for c in cls]
 
     @classmethod
-    # region method
-    # convert properties enum to list by name
-    def list_value(cls):
+    def list_value(cls) -> List:
+        """Convert enum properties to a list of values."""
         return [c.value for c in cls]
 
 
 class Gender(ExtendedEnum):
     # region enum
-    Male = 0
-    Female = 1
+    Male = auto()
+    Female = auto()
 
 
 class Status(ExtendedEnum):
     # region enum
-    Online = 0
-    Offline = 1
+    Online = auto()
+    Offline = auto()
 
 
 class StatusDiaLog(ExtendedEnum):
     # region enum
-    Yes = 1
-    No = 2
+    Yes = auto()
+    No = auto()
 
 
-class ColumnHeaders(ExtendedEnum):
+class ColumnHeaders(StrEnum, ExtendedEnum):
+    """Enum for column headers, values act as strings."""
     FULL_NAME = "Họ tên"
     ADDRESS = "Địa chỉ"
     EMAIL = "Email"
@@ -64,6 +61,4 @@ class ColumnHeaders(ExtendedEnum):
     STATUS = "Trạng thái"
     GENDER = "Giới tính"
     DATE_OF_BIRTH = "Ngày Sinh"
-
-
 # endregion main

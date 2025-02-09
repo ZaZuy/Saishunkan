@@ -23,15 +23,14 @@ import datetime
 
 # region method
 
-
+DATE_FORMAT = "%m/%d/%Y"
 # convert string to datetiom with format m/d/y
 def convert(date_time: str) -> datetime.datetime:
-    format = "%m/%d/%Y"
+    """Chuyển đổi chuỗi ngày tháng thành đối tượng datetime. Ném lỗi nếu sai định dạng."""
     try:
-        datetime_obj = datetime.datetime.strptime(date_time, format)
-        return datetime_obj
+        return datetime.datetime.strptime(date_time, DATE_FORMAT)
     except ValueError:
-        return None
+        raise ValueError(f"Invalid date format '{date_time}'. Expected format: {DATE_FORMAT}")
 
 
 # endregion method

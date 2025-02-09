@@ -18,12 +18,10 @@
 
 # region import
 # Python
-from datetime import date
-from InforEnum import Gender, Status
 import re
-
-# endregion import
-
+from datetime import date, datetime
+from typing import Union
+from InforEnum import Gender, Status  # Assuming Gender and Status enums are imported
 
 class User:
     # region init
@@ -35,15 +33,15 @@ class User:
         phone_number: str = "",
         status: str = "",
         gender: str = "",
-        birth_date: date = "",
+        birth_date: Union[date, str] = "",
     ):
-        self._full_name = full_name
-        self._address = address
-        self._email = email
-        self._phone_number = phone_number
-        self._status = status
-        self._gender = gender
-        self._birth_date = birth_date
+        self.full_name = full_name
+        self.address = address
+        self.email = email
+        self.phone_number = phone_number
+        self.status = status
+        self.gender = gender
+        self.birth_date = birth_date
 
     # region Getter and Setter for full_name
     @property
@@ -51,16 +49,14 @@ class User:
         return self._full_name
 
     @full_name.setter
-    def full_name(self, value):
+    def full_name(self, value: str):
         if not value:
             raise ValueError("Full name cannot be empty")
-        for char in value:
-            if len(value):
-                if not (("A" <= char and char <= "Z") or ("a" <= char and char <= "z")):
-                    raise ValueError("Name is valid")
-            else:
-                raise ValueError("Name is so long")
-        self._full_name = value
+        if len(value) > 50:
+            raise ValueError("Name is too long")
+        if not re.match(r"^[a-zA-ZÀ-ỹ\s]+$", value):
+            raise ValueError("Invalid name")
+        self._full_name = value.strip()
 
     # region Getter and Setter for address
     @property
@@ -68,12 +64,12 @@ class User:
         return self._address
 
     @address.setter
-    def address(self, value):
+    def address(self, value: str):
         if not value:
             raise ValueError("Address cannot be empty")
-        if len(value):
-            raise ValueError("Address is so long")
-        self._address = value
+        if len(value) > 100:
+            raise ValueError("Address is too long")
+        self._address = value.strip()
 
     # region Getter and Setter for email
     @property
@@ -81,13 +77,12 @@ class User:
         return self._email
 
     @email.setter
-    def email(self, value):
-        if len(value) < 30:
-            if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", value):
-                raise ValueError("Invalid email format")
-        else:
-            raise ValueError("Email is so long")
-        self._email = value
+    def email(self, value: str):
+        if len(value) > 50:
+            raise ValueError("Email is too long")
+        if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", value):
+            raise ValueError("Invalid email format")
+        self._email = value.strip()
 
     # region Getter and Setter for phone_number
     @property
@@ -95,10 +90,10 @@ class User:
         return self._phone_number
 
     @phone_number.setter
-    def phone_number(self, value):
-        if not value.isdigit() or len(value) != 10:
-            raise ValueError("Invalid phone number")
-        self._phone_number = value
+    def phone_number(self, value: str):
+        if not re.match(r"^\+?(\d{1,3})?[-.\s]?(\d{9,12})$", value):
+            raise ValueError("Invalid phone number format")
+        self._phone_number = value.strip()
 
     # region Getter and Setter for status
     @property
@@ -106,20 +101,20 @@ class User:
         return self._status
 
     @status.setter
-    def status(self, value):
+    def status(self, value: str):
         if value not in Status.list_name():
             raise ValueError("Status must be 'Online' or 'Offline'")
         self._status = value
 
-    # regionGetter and Setter for gender
+    # region Getter and Setter for gender
     @property
     def gender(self):
         return self._gender
 
     @gender.setter
-    def gender(self, value):
+    def gender(self, value: str):
         if value not in Gender.list_name():
-            raise ValueError("Gender must be 'Male', 'Female', or 'Other'")
+            raise ValueError("Gender must be 'Male' or 'Female'")
         self._gender = value
 
     # region Getter and Setter for birth_date
@@ -128,11 +123,21 @@ class User:
         return self._birth_date
 
     @birth_date.setter
-    def birth_date(self, value):
+    def birth_date(self, value: Union[date, str]):
+        if isinstance(value, str):
+            try:
+                value = datetime.strptime(value, "%Y-%m-%d").date()  # Convert string to date
+            except ValueError:
+                raise ValueError("Invalid date format, must be 'YYYY-MM-DD'")
+        elif not isinstance(value, date):
+            raise ValueError("birth_date must be a date object or a valid date string")
         self._birth_date = value
 
     def to_list(self):
         """Convert user object to a list for CSV writing."""
+        # Ensure all required fields are valid before converting
+        if not self.full_name or not self.address or not self.email or not self.phone_number:
+            raise ValueError("Missing required user information")
         return [
             self.full_name,
             self.address,
@@ -140,7 +145,7 @@ class User:
             self.phone_number,
             self.status,
             self.gender,
-            self.birth_date,
+            self.birth_date.isoformat() if isinstance(self.birth_date, date) else self.birth_date,
         ]
 
 
