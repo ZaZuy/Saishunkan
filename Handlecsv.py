@@ -18,8 +18,10 @@
 
 # region import
 # Python
+#  Import third-party modules
 import csv
 from typing import List, Optional
+
 
 class HandleFileCsv:
     @staticmethod
@@ -39,10 +41,14 @@ class HandleFileCsv:
     @staticmethod
     def writefile(file_path: str, data: List[List[str]]) -> bool:
         """Ghi dữ liệu vào file CSV, trả về True nếu thành công, False nếu có lỗi."""
-        if not data or not isinstance(data, list) or not all(isinstance(row, list) for row in data):
+        if (
+            not data
+            or not isinstance(data, list)
+            or not all(isinstance(row, list) for row in data)
+        ):
             print("Error: Data must be a non-empty list of lists.")
             return False
-        
+
         try:
             with open(file_path, "w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
@@ -51,6 +57,5 @@ class HandleFileCsv:
         except Exception as e:
             print(f"Error: {e}")
             return False
-
 
     # region end method
