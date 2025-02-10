@@ -18,10 +18,14 @@
 
 # region import
 # Python
+#  Import third-party modules
 import re
+
+#  Import standard modules
 from datetime import date, datetime
 from typing import Union
 from InforEnum import Gender, Status  # Assuming Gender and Status enums are imported
+
 
 class User:
     # region init
@@ -33,15 +37,15 @@ class User:
         phone_number: str = "",
         status: str = "",
         gender: str = "",
-        birth_date: Union[date, str] = "",
+        birth_date: date = "",
     ):
-        self.full_name = full_name
-        self.address = address
-        self.email = email
-        self.phone_number = phone_number
-        self.status = status
-        self.gender = gender
-        self.birth_date = birth_date
+        self._full_name = full_name
+        self._address = address
+        self._email = email
+        self._phone_number = phone_number
+        self._status = status
+        self._gender = gender
+        self._birth_date = birth_date
 
     # region Getter and Setter for full_name
     @property
@@ -49,14 +53,16 @@ class User:
         return self._full_name
 
     @full_name.setter
-    def full_name(self, value: str):
+    def full_name(self, value):
         if not value:
             raise ValueError("Full name cannot be empty")
-        if len(value) > 50:
-            raise ValueError("Name is too long")
-        if not re.match(r"^[a-zA-ZÀ-ỹ\s]+$", value):
-            raise ValueError("Invalid name")
-        self._full_name = value.strip()
+        for char in value:
+            if len(value):
+                if not (("A" <= char and char <= "Z") or ("a" <= char and char <= "z")):
+                    raise ValueError("Name is valid")
+            else:
+                raise ValueError("Name is so long")
+        self._full_name = value
 
     # region Getter and Setter for address
     @property
@@ -126,17 +132,23 @@ class User:
     def birth_date(self, value: Union[date, str]):
         if isinstance(value, str):
             try:
-                value = datetime.strptime(value, "%Y-%m-%d").date()  # Convert string to date
+                value = datetime.strptime(value, "%m/%d/%Y").date()
             except ValueError:
-                raise ValueError("Invalid date format, must be 'YYYY-MM-DD'")
-        elif not isinstance(value, date):
+                raise ValueError("Invalid date format. Expected MM/DD/YYYY")
+        else:
             raise ValueError("birth_date must be a date object or a valid date string")
+
         self._birth_date = value
 
     def to_list(self):
         """Convert user object to a list for CSV writing."""
         # Ensure all required fields are valid before converting
-        if not self.full_name or not self.address or not self.email or not self.phone_number:
+        if (
+            not self.full_name
+            or not self.address
+            or not self.email
+            or not self.phone_number
+        ):
             raise ValueError("Missing required user information")
         return [
             self.full_name,
@@ -145,7 +157,11 @@ class User:
             self.phone_number,
             self.status,
             self.gender,
-            self.birth_date.isoformat() if isinstance(self.birth_date, date) else self.birth_date,
+            (
+                self.birth_date.isoformat()
+                if isinstance(self.birth_date, date)
+                else self.birth_date
+            ),
         ]
 
 

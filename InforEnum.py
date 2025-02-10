@@ -18,8 +18,12 @@
 
 # region import
 # Python
-from enum import Enum, auto, StrEnum
+#  Import third-party modules
 from typing import List
+
+#  Import standard modules
+from enum import Enum, auto, StrEnum
+
 
 # region main
 class ExtendedEnum(Enum):
@@ -54,6 +58,7 @@ class StatusDiaLog(ExtendedEnum):
 
 class ColumnHeaders(StrEnum, ExtendedEnum):
     """Enum for column headers, values act as strings."""
+
     FULL_NAME = "Họ tên"
     ADDRESS = "Địa chỉ"
     EMAIL = "Email"
@@ -61,4 +66,6 @@ class ColumnHeaders(StrEnum, ExtendedEnum):
     STATUS = "Trạng thái"
     GENDER = "Giới tính"
     DATE_OF_BIRTH = "Ngày Sinh"
+
+
 # endregion main

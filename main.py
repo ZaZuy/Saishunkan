@@ -42,10 +42,11 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QIntValidator
 import design
 from PySide6.QtCore import QDate
-# Import module of project
+
+# Import standard modules
 from Handlecsv import HandleFileCsv
 from UserModel import User
-from InforEnum import *
+from InforEnum import StatusDiaLog, ColumnHeaders
 from Helper import convert
 
 # endregion import
@@ -63,13 +64,13 @@ COLUMN_HEADERS = (
 FILE_PATH = "datatest.csv"
 
 resize_modes = [
-    QHeaderView.Stretch,         # Column 0
-    QHeaderView.ResizeToContents, # Column 1
-    QHeaderView.Stretch,         # Column 2
-    QHeaderView.ResizeToContents, # Column 3
-    QHeaderView.ResizeToContents, # Column 4
-    QHeaderView.ResizeToContents, # Column 5
-    QHeaderView.ResizeToContents  # Column 6
+    QHeaderView.Stretch,  # Column 0
+    QHeaderView.ResizeToContents,  # Column 1
+    QHeaderView.Stretch,  # Column 2
+    QHeaderView.ResizeToContents,  # Column 3
+    QHeaderView.ResizeToContents,  # Column 4
+    QHeaderView.ResizeToContents,  # Column 5
+    QHeaderView.ResizeToContents,  # Column 6
 ]
 
 
@@ -257,7 +258,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
 
     # region delete data for Qtablewidget
     def deleteProduct(self):
-        
+
         column = self.CurrentPoint
 
         replyDiaLog = self.showDialogYesOrNo(
@@ -269,7 +270,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
 
     # region edit data for Qtablewidget
     def saveProduct(self):
-        """ Determines whether to save a new user or update an existing one. """
+        """Determines whether to save a new user or update an existing one."""
         try:
             if self.CurrentPoint == -1:
                 self.create_new_user()
@@ -281,27 +282,26 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
             self.tableWidget.selectRow(self.CurrentPoint)
             return False
 
-
     def create_new_user(self):
-        """ Creates a new user and saves it. """
+        """Creates a new user and saves it."""
         self.writeProduct()
         self.showDialogNotifications("Confirmation", "Saved!")
 
-
     def update_existing_user(self):
-        """ Updates an existing user after confirmation. """
+        """Updates an existing user after confirmation."""
         if not self.DetectChange:
             return
 
-        replyDiaLog = self.showDialogYesOrNo("Confirmation", "Do you want to change data?").exec()
+        replyDiaLog = self.showDialogYesOrNo(
+            "Confirmation", "Do you want to change data?"
+        ).exec()
         if replyDiaLog == StatusDiaLog.Yes.value:
             user = self.get_user_from_form()
             self.update_table_row(self.CurrentPoint, user)
             self.DetectChange = False
 
-
     def get_user_from_form(self):
-        """ Retrieves user data from the form and returns a User object. """
+        """Retrieves user data from the form and returns a User object."""
         user = User()
         user.full_name = self.fullnameText.displayText()
         user.address = self.addressText.displayText()
@@ -312,17 +312,15 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
         user.birth_date = self.birthDateEdit.text()
         return user
 
-
     def update_table_row(self, row, user):
-        """ Updates a specific row in QTableWidget with new user data. """
+        """Updates a specific row in QTableWidget with new user data."""
         newData = user.to_list()
         for col in range(self.tableWidget.columnCount()):
             self.tableWidget.setItem(row, col, QTableWidgetItem(newData[col]))
 
-
     # Catch change of form
     def on_data_changed(self):
-        
+
         self.DetectChange = True
 
     # handle logic of event change
@@ -345,7 +343,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
 
     # handle logic of event Quit
     def handleLogicQuit(self):
-        
+
         if self.DetectChange is True or self.compareData() is True:
             if (
                 self.DetectChange is True
@@ -370,7 +368,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
 
     # fill data in row QTableWidget
     def setupDataForm(self):
-        
+
         fillData = self.handleLogicChange()
         if fillData is True:
             self.CurrentPoint = self.tableWidget.currentRow()
@@ -418,7 +416,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
 
     # reset form
     def resetFields(self):
-        
+
         self.resetPoints()
         for widget in QApplication.allWidgets():
             if isinstance(widget, QLineEdit):
@@ -457,7 +455,7 @@ class MainWindow(QMainWindow, design.Ui_MainWindow):
 
     # event notifica of button save
     def notificaWhenSave(self):
-        
+
         if self.DetectChange is True or self.compareData() is True:
             if (
                 self.DetectChange is True
